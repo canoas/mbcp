@@ -1,0 +1,2462 @@
+openapi: 3.0.1
+info:
+  title: B2B Accounts
+  description: 'Perform banking inquiries and transactions directly from your management software with the B2B Millennium API. If you are interested, please contact us at this email address: api.integration@millenniumbcp.pt'
+  version: v1-mock
+servers:
+  - url: https://apiqa.millenniumbcp.pt/b2bInquiring/v1-mock
+paths:
+  /services/accounts/balances/inquiry:
+    post:
+      tags:
+        - B2B Inquiring
+      summary: B2B ACCOUNTS BALANCES API
+      description: This operation allows you to retrieve the current balances for one or more accounts. The request must include the account details for which the balances are to be retrieved.
+      operationId: AccountsBalancesInquiry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountBalancesRequest'
+            example:
+              AcctInqRq:
+                RqUID: 39ecd6bd-ce67-46e7-8309-78086c21aab7
+                MsgRqHdr:
+                  ContextRqHdr:
+                    ClientDt: '2026-08-21T16:34:13.8090000+00:00'
+                    CustLangPref: PT
+                    ClientApp:
+                      Org: Millennium bcp
+                      Name: testClientAppName
+                      Version: 1.0.0
+                AcctSel:
+                  - AcctKeys:
+                      AcctIdent:
+                        AcctIdentType: BBAN
+                        AcctIdentValue: '1372742'
+                      AcctType: DDA
+                      CurCode:
+                        CurCodeValue: EUR
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountBalancesResponse'
+              example:
+                AcctInqRs:
+                  AcctRec:
+                    - AcctId: '1372742'
+                      AcctInfo:
+                        AcctBal:
+                          - BalType: Ledger
+                            CurAmt:
+                              Amt: 482796.36
+                              CurCode:
+                                CurCodeValue: EUR
+                          - BalType: Avail
+                            CurAmt:
+                              Amt: 482796.36
+                              CurCode:
+                                CurCodeValue: EUR
+                          - BalType: Current
+                            CurAmt:
+                              Amt: 482796.36
+                              CurCode:
+                                CurCodeValue: EUR
+                      AcctStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-21T17:34:21.3560000+00:00'
+                  RqUID: 39ecd6bd-ce67-46e7-8309-78086c21aab7
+                  Status:
+                    StatusCode: 0
+                    StatusDesc: Success
+                    Severity: Info
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-21T16:34:45.3649801+00:00'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountBalancesErrorResponse'
+              example:
+                AcctInqRs:
+                  RqUID: 5d2c3170-b3a8-406d-bee2-a3e930b1e144
+                  Status:
+                    StatusCode: 1020
+                    StatusDesc: Required element not included.
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 1020
+                        StatusDesc: 'The AcctInqRq.AcctSel[0].AcctKeys.AcctIdent.AcctIdentValue field is required.'
+                        Severity: Error
+                        SubjectElement: 'AcctInqRq.AcctSel[0].AcctKeys.AcctIdent.AcctIdentValue'
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-21T16:53:38.9330531+00:00'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountBalancesErrorResponse'
+              example:
+                AcctInqRs:
+                  RqUID: ''
+                  Status:
+                    StatusCode: 100
+                    StatusDesc: Unexpected error while consulting account balances
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 500
+                        StatusDesc: 'An item with the same key has already been added. Key: AcctIdentValue (Parameter ''key'')'
+                        Severity: Error
+                        SubjectElement: Exception
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-21T16:52:10.9115992+00:00'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountBalancesErrorResponse'
+              example:
+                AcctInqRs:
+                  RqUID: cc405a48-c8bc-42a5-a698-89d49a759c3b
+                  Status:
+                    StatusCode: 100
+                    StatusDesc: Error while consulting account balances
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 502
+                        StatusDesc: 'SERVICE_ERROR: Conta não pertence ao Patrimonio.'
+                        Severity: Error
+                        SubjectElement: Exception
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-21T16:51:01.4309438+00:00'
+  /services/accounts/transactions/inquiry:
+    post:
+      tags:
+        - B2B Inquiring
+      summary: B2B ACCOUNT TRANSACTIONS API
+      description: This operation allows you to retrieve the transaction history for a specific account. The request must include the account details and any necessary parameters for filtering the transactions.
+      operationId: AccountTransactionsInquiry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountTransactionsRequest'
+            example:
+              AcctTrnInqRq:
+                RqUID: 3e2bac73-ac6e-4087-9d68-f007f64b9dc1
+                MsgRqHdr:
+                  ContextRqHdr:
+                    ClientDt: '2026-08-21T16:34:45.7560000+00:00'
+                    CustLangPref: PT
+                    ClientApp:
+                      Org: Millennium bcp
+                      Name: testClientAppName
+                      Version: 1.0.0
+                AcctTrnSel:
+                  - AcctKeys:
+                      AcctIdent:
+                        AcctIdentType: BBAN
+                        AcctIdentValue: '1372742'
+                      AcctType: DDA
+                      CurCode:
+                        CurCodeValue: EUR
+                    DtRange:
+                      StartDt: '2026-06-01T00:00:00.0000000+00:00'
+                      EndDt: '2026-07-01T00:00:00.0000000+00:00'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountTransactionsResponse'
+              example:
+                AcctTrnInqRs:
+                  AcctTrnRec:
+                    - AcctTrnId: '1372742'
+                      AcctTrnInfo:
+                        TrnType:
+                          TrnTypeSource: IFX
+                          TrnTypeValue: Debit
+                        TrnSubType: '91'
+                        PostedDt: '2026-06-01T00:00:00.8140000+00:00'
+                        EffDt: '2026-06-01T00:00:00.8140000+00:00'
+                        TotalCurAmt:
+                          Amt: -50
+                          CurCode:
+                            CurCodeValue: EUR
+                        Name: DD OCIDENTAL 00013610162 VIDA        RKA0132986
+                        StmtRunningBal:
+                          Amt: 487685.84
+                          CurCode:
+                            CurCodeValue: EUR
+                        XferKeys:
+                          XferId: 2026052599SRSSBB0004
+                        RefData:
+                          RefType: MBCPTransactionCode
+                          RefIdent: '09985'
+                          RefDesc: MBCP Transaction Code
+                        BillRefText: 1:129991-38-84-1-0-1
+                      AcctTrnStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-21T16:34:46.9637790+00:00'
+                    - AcctTrnId: '1372742'
+                      AcctTrnInfo:
+                        TrnType:
+                          TrnTypeSource: IFX
+                          TrnTypeValue: Debit
+                        TrnSubType: '91'
+                        PostedDt: '2026-06-01T00:00:00.8140000+00:00'
+                        EffDt: '2026-06-01T00:00:00.8140000+00:00'
+                        TotalCurAmt:
+                          Amt: -153.5
+                          CurCode:
+                            CurCodeValue: EUR
+                        Name: DD OCIDENTAL 01120457282 ACIDEN TRAB AT79040160
+                        StmtRunningBal:
+                          Amt: 487532.34
+                          CurCode:
+                            CurCodeValue: EUR
+                        XferKeys:
+                          XferId: 2026052501SRXSBB0002
+                        RefData:
+                          RefType: MBCPTransactionCode
+                          RefIdent: '09985'
+                          RefDesc: MBCP Transaction Code
+                        BillRefText: 1:129991-38-554-1-0-1
+                      AcctTrnStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-21T16:34:46.9637790+00:00'
+                    - AcctTrnId: '1372742'
+                      AcctTrnInfo:
+                        TrnType:
+                          TrnTypeSource: IFX
+                          TrnTypeValue: Debit
+                        TrnSubType: '91'
+                        PostedDt: '2026-06-08T00:00:00.8140000+00:00'
+                        EffDt: '2026-06-08T00:00:00.8140000+00:00'
+                        TotalCurAmt:
+                          Amt: -30.8
+                          CurCode:
+                            CurCodeValue: EUR
+                        Name: DD OCIDENTAL 00013563117 GESTORCHAVE RKA0123887
+                        StmtRunningBal:
+                          Amt: 487501.54
+                          CurCode:
+                            CurCodeValue: EUR
+                        XferKeys:
+                          XferId: 2026052999SRSSBB0003
+                        RefData:
+                          RefType: MBCPTransactionCode
+                          RefIdent: '09985'
+                          RefDesc: MBCP Transaction Code
+                        BillRefText: 1:130066-45-85-1-0-1
+                      AcctTrnStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-21T16:34:46.9637790+00:00'
+                    - AcctTrnId: '1372742'
+                      AcctTrnInfo:
+                        TrnType:
+                          TrnTypeSource: IFX
+                          TrnTypeValue: Debit
+                        TrnSubType: '91'
+                        PostedDt: '2026-06-15T00:00:00.8140000+00:00'
+                        EffDt: '2026-06-15T00:00:00.8140000+00:00'
+                        TotalCurAmt:
+                          Amt: -17.9
+                          CurCode:
+                            CurCodeValue: EUR
+                        Name: DD OCIDENTAL 01103277806 MEDIS       DI79039613
+                        StmtRunningBal:
+                          Amt: 487483.64
+                          CurCode:
+                            CurCodeValue: EUR
+                        XferKeys:
+                          XferId: 2026060801SRXSBB0004
+                        RefData:
+                          RefType: MBCPTransactionCode
+                          RefIdent: '09985'
+                          RefDesc: MBCP Transaction Code
+                        BillRefText: ''
+                      AcctTrnStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-21T16:34:46.9637790+00:00'
+                    - AcctTrnId: '1372742'
+                      AcctTrnInfo:
+                        TrnType:
+                          TrnTypeSource: IFX
+                          TrnTypeValue: Debit
+                        TrnSubType: '91'
+                        PostedDt: '2026-06-23T00:00:00.8140000+00:00'
+                        EffDt: '2026-06-23T00:00:00.8140000+00:00'
+                        TotalCurAmt:
+                          Amt: -11.08
+                          CurCode:
+                            CurCodeValue: EUR
+                        Name: DD OCIDENTAL 00013569422 GESTORCHAVE RKA0126583
+                        StmtRunningBal:
+                          Amt: 487472.56
+                          CurCode:
+                            CurCodeValue: EUR
+                        XferKeys:
+                          XferId: 2026061699SRSSBB0003
+                        RefData:
+                          RefType: MBCPTransactionCode
+                          RefIdent: '09985'
+                          RefDesc: MBCP Transaction Code
+                        BillRefText: ''
+                      AcctTrnStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-21T16:34:46.9637790+00:00'
+                    - AcctTrnId: '1372742'
+                      AcctTrnInfo:
+                        TrnType:
+                          TrnTypeSource: IFX
+                          TrnTypeValue: Debit
+                        TrnSubType: '91'
+                        PostedDt: '2026-06-23T00:00:00.8140000+00:00'
+                        EffDt: '2026-06-23T00:00:00.8140000+00:00'
+                        TotalCurAmt:
+                          Amt: -190
+                          CurCode:
+                            CurCodeValue: EUR
+                        Name: Com. Abertura do Protocolo N. 101102
+                        StmtRunningBal:
+                          Amt: 487282.56
+                          CurCode:
+                            CurCodeValue: EUR
+                        XferKeys:
+                          XferId: XSP  00006610902O
+                        RefData:
+                          RefType: MBCPTransactionCode
+                          RefIdent: '09018'
+                          RefDesc: MBCP Transaction Code
+                        BillRefText: 1:130233-56-10-1-0-1
+                      AcctTrnStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-21T16:34:46.9637790+00:00'
+                    - AcctTrnId: '1372742'
+                      AcctTrnInfo:
+                        TrnType:
+                          TrnTypeSource: IFX
+                          TrnTypeValue: Debit
+                        TrnSubType: '91'
+                        PostedDt: '2026-06-23T00:00:00.8140000+00:00'
+                        EffDt: '2026-06-23T00:00:00.8140000+00:00'
+                        TotalCurAmt:
+                          Amt: -43.7
+                          CurCode:
+                            CurCodeValue: EUR
+                        Name: IVA à taxa de 23%
+                        StmtRunningBal:
+                          Amt: 487238.86
+                          CurCode:
+                            CurCodeValue: EUR
+                        XferKeys:
+                          XferId: XSP  00006610903O
+                        RefData:
+                          RefType: MBCPTransactionCode
+                          RefIdent: '09018'
+                          RefDesc: MBCP Transaction Code
+                        BillRefText: ''
+                      AcctTrnStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-21T16:34:46.9637790+00:00'
+                    - AcctTrnId: '1372742'
+                      AcctTrnInfo:
+                        TrnType:
+                          TrnTypeSource: IFX
+                          TrnTypeValue: Credit
+                        TrnSubType: '5'
+                        PostedDt: '2026-06-26T00:00:00.8140000+00:00'
+                        EffDt: '2026-06-26T00:00:00.8140000+00:00'
+                        TotalCurAmt:
+                          Amt: 101
+                          CurCode:
+                            CurCodeValue: EUR
+                        Name: TRF DE Test ToDetails
+                        StmtRunningBal:
+                          Amt: 487339.86
+                          CurCode:
+                            CurCodeValue: EUR
+                        XferKeys:
+                          XferId: TNE260626150342O3499
+                        RefData:
+                          RefType: MBCPTransactionCode
+                          RefIdent: '08050'
+                          RefDesc: MBCP Transaction Code
+                        BillRefText: ''
+                      AcctTrnStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-21T16:34:46.9637790+00:00'
+                    - AcctTrnId: '1372742'
+                      AcctTrnInfo:
+                        TrnType:
+                          TrnTypeSource: IFX
+                          TrnTypeValue: Credit
+                        TrnSubType: '5'
+                        PostedDt: '2026-06-29T00:00:00.8140000+00:00'
+                        EffDt: '2026-06-29T00:00:00.8140000+00:00'
+                        TotalCurAmt:
+                          Amt: 101
+                          CurCode:
+                            CurCodeValue: EUR
+                        Name: TRF DE Test ToDetails
+                        StmtRunningBal:
+                          Amt: 487440.86
+                          CurCode:
+                            CurCodeValue: EUR
+                        XferKeys:
+                          XferId: TNE260629160344O2338
+                        RefData:
+                          RefType: MBCPTransactionCode
+                          RefIdent: '08050'
+                          RefDesc: MBCP Transaction Code
+                        BillRefText: ''
+                      AcctTrnStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-21T16:34:46.9637790+00:00'
+                    - AcctTrnId: '1372742'
+                      AcctTrnInfo:
+                        TrnType:
+                          TrnTypeSource: IFX
+                          TrnTypeValue: Credit
+                        TrnSubType: '5'
+                        PostedDt: '2026-06-30T00:00:00.8140000+00:00'
+                        EffDt: '2026-06-30T00:00:00.8140000+00:00'
+                        TotalCurAmt:
+                          Amt: 101
+                          CurCode:
+                            CurCodeValue: EUR
+                        Name: TRF DE Test PayeeName
+                        StmtRunningBal:
+                          Amt: 487541.86
+                          CurCode:
+                            CurCodeValue: EUR
+                        XferKeys:
+                          XferId: TNP260629145449O7882
+                        RefData:
+                          RefType: MBCPTransactionCode
+                          RefIdent: '08050'
+                          RefDesc: MBCP Transaction Code
+                        BillRefText: 1:130317-64-44-1-0-1
+                      AcctTrnStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-21T16:34:46.9637790+00:00'
+                    - AcctTrnId: '1372742'
+                      AcctTrnInfo:
+                        TrnType:
+                          TrnTypeSource: IFX
+                          TrnTypeValue: Credit
+                        TrnSubType: '5'
+                        PostedDt: '2026-06-30T00:00:00.8140000+00:00'
+                        EffDt: '2026-06-30T00:00:00.8140000+00:00'
+                        TotalCurAmt:
+                          Amt: 120.32
+                          CurCode:
+                            CurCodeValue: EUR
+                        Name: TRANSF OCIDENTAL ESTORNO RKA0123886
+                        StmtRunningBal:
+                          Amt: 487662.18
+                          CurCode:
+                            CurCodeValue: EUR
+                        XferKeys:
+                          XferId: 2600123805SC00330001
+                        RefData:
+                          RefType: MBCPTransactionCode
+                          RefIdent: '08160'
+                          RefDesc: MBCP Transaction Code
+                        BillRefText: 1:130317-27-43-1-0-1
+                      AcctTrnStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-21T16:34:46.9637790+00:00'
+                    - AcctTrnId: '1372742'
+                      AcctTrnInfo:
+                        TrnType:
+                          TrnTypeSource: IFX
+                          TrnTypeValue: Debit
+                        TrnSubType: '91'
+                        PostedDt: '2026-07-01T00:00:00.8140000+00:00'
+                        EffDt: '2026-07-01T00:00:00.8140000+00:00'
+                        TotalCurAmt:
+                          Amt: -50
+                          CurCode:
+                            CurCodeValue: EUR
+                        Name: DD OCIDENTAL 00013610162 VIDA        RKA0132986
+                        StmtRunningBal:
+                          Amt: 487612.18
+                          CurCode:
+                            CurCodeValue: EUR
+                        XferKeys:
+                          XferId: 2026062501SRSSBB0001
+                        RefData:
+                          RefType: MBCPTransactionCode
+                          RefIdent: '09985'
+                          RefDesc: MBCP Transaction Code
+                        BillRefText: 1:130334-60-1342-1-0-1
+                      AcctTrnStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-21T16:34:46.9637790+00:00'
+                  RqUID: 3e2bac73-ac6e-4087-9d68-f007f64b9dc1
+                  Status:
+                    StatusCode: 0
+                    StatusDesc: Success
+                    Severity: Info
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-21T16:34:46.9637790+00:00'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountTransactionsErrorResponse'
+              example:
+                AcctTrnInqRs:
+                  RqUID: 2436414a-b0e0-4669-be88-8e3928c222f8
+                  Status:
+                    StatusCode: 1020
+                    StatusDesc: Required element not included.
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 1020
+                        StatusDesc: The AcctTrnSel field must contain exactly one item supported.
+                        Severity: Error
+                        SubjectElement: AcctTrnSel
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-21T17:03:27.9181585+00:00'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountTransactionsErrorResponse'
+              example:
+                AcctTrnInqRs:
+                  RqUID: ''
+                  Status:
+                    StatusCode: 100
+                    StatusDesc: Unexpected error while consulting account Transactions
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 500
+                        StatusDesc: 'An item with the same key has already been added. Key: AcctIdentValue (Parameter ''key'')'
+                        Severity: Error
+                        SubjectElement: Exception
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-21T17:04:40.6237528+00:00'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountTransactionsErrorResponse'
+              example:
+                AcctTrnInqRs:
+                  RqUID: ea261f5b-1b3e-449c-9a8b-e7a25b9cc4d7
+                  Status:
+                    StatusCode: 100
+                    StatusDesc: Error while consulting account Transactions
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 502
+                        StatusDesc: 'SERVICE_ERROR: Conta não pertence ao Patrimonio.'
+                        Severity: Error
+                        SubjectElement: Exception
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-21T16:59:16.2942954+00:00'
+  /services/parties/payee-information/inquiry:
+    post:
+      tags:
+        - B2B Inquiring
+      summary: B2B ACCOUNT PAYEE INFORMATION API
+      description: This operation allows you to retrieve the payee information for a specific account. The request must include the account details for which the payee information is to be retrieved.
+      operationId: AccountPayeeInformationInquiry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountPayeeInformationRequest'
+            example:
+              AcctInqRq:
+                RqUID: 4ad740a6-ed00-446e-8fcb-20674aaf6275
+                MsgRqHdr:
+                  ContextRqHdr:
+                    ClientDt: '2026-08-24T13:52:54.4510000+00:00'
+                    CustLangPref: PT
+                    ClientApp:
+                      Org: Millennium bcp
+                      Name: testClientAppName
+                      Version: 1.0.0
+                AcctSel:
+                  - AcctKeys:
+                      AcctIdent:
+                        AcctIdentType: IBAN
+                        AcctIdentValue: FR7617515900000476128824455
+                      AcctType: DDA
+                      CurCode:
+                        CurCodeValue: EUR
+                      FIIdentType: BICSWIFT
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountPayeeInformationResponse'
+              example:
+                AcctInqRs:
+                  AcctRec:
+                    - AcctId: FR7617515900000476128824455
+                      AcctInfo:
+                        FIData:
+                          FIIdent: CEPAFRPP751
+                          FIIdentType: BICSWIFT
+                          RefData:
+                            - RefType: Address1
+                              RefIdent: 50 AVENUE PIERRE MENDES FRANCE
+                            - RefType: City
+                              RefIdent: PARIS
+                            - RefType: Country
+                              RefIdent: FRANCE
+                            - RefType: Sepa
+                              RefIdent: S
+                          Name: 'CAISSES D''EPARGNE-GROUPE BPCE '
+                      AcctStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-24T13:53:01.3966368+00:00'
+                  RqUID: 4ad740a6-ed00-446e-8fcb-20674aaf6275
+                  Status:
+                    StatusCode: 0
+                    StatusDesc: Success
+                    Severity: Info
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-24T13:53:01.3966368+00:00'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountPayeeInformationErrorResponse'
+              example:
+                AcctInqRs:
+                  RqUID: 043a43a4-6b9a-491e-a9f2-7747c085d2f1
+                  Status:
+                    StatusCode: 1020
+                    StatusDesc: Required element not included.
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 1020
+                        StatusDesc: 'The AcctInqRq.AcctSel[0].AcctKeys.AcctIdent.AcctIdentValue field is required.'
+                        Severity: Error
+                        SubjectElement: 'AcctInqRq.AcctSel[0].AcctKeys.AcctIdent.AcctIdentValue'
+                      - StatusCode: 1020
+                        StatusDesc: The AcctIdentValue field must start with 2 uppercase letters followed by alphanumeric characters.
+                        Severity: Error
+                        SubjectElement: 'AcctInqRq.AcctSel[0].AcctKeys.AcctIdent.AcctIdentValue'
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-24T14:23:16.3886328+00:00'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountPayeeInformationErrorResponse'
+              example:
+                AcctInqRs:
+                  RqUID: ''
+                  Status:
+                    StatusCode: 100
+                    StatusDesc: Unexpected error while consulting account payee information
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 500
+                        StatusDesc: 'An item with the same key has already been added. Key: AcctIdentValue (Parameter ''key'')'
+                        Severity: Error
+                        SubjectElement: Exception
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-24T14:29:09.8309595+00:00'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountPayeeInformationErrorResponse'
+              example:
+                AcctInqRs:
+                  RqUID: 3be018a1-1eb2-4950-9d3f-41d639d67a4d
+                  Status:
+                    StatusCode: 100
+                    StatusDesc: Error while consulting account payee information
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 502
+                        StatusDesc: 'SERVICE_ERROR: Identifique dados do Banco Benef pela opção Global'
+                        Severity: Error
+                        SubjectElement: Exception
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-24T14:25:58.4696250+00:00'
+  /services/parties/confirmation-of-payee/verify:
+    post:
+      tags:
+        - B2B Inquiring
+      summary: B2B CONFIRMATION OF PAYEE API
+      description: This operation allows you to confirm if the selected account details match the fiscal number of the party provided. The request must include the account details and the fiscal number for verification.
+      operationId: ConfirmationOfPayeeBulkInquiry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmationOfPayeeRequest'
+            example:
+              PartyAcctRelInqRq:
+                RqUID: 80d1301f-a57e-4c92-9886-55f1272ac1d8
+                MsgRqHdr:
+                  ContextRqHdr:
+                    ClientDt: '2026-08-21T16:34:52.1880000+00:00'
+                    CustLangPref: PT
+                    ClientApp:
+                      Org: Millennium bcp
+                      Name: testClientAppName
+                      Version: 1.0.0
+                PartyAcctRelSel:
+                  - PartyKeys:
+                      PartyId: PT277172861
+                    AcctKeys:
+                      AcctIdent:
+                        AcctIdentType: IBAN
+                        AcctIdentValue: PT50003300000000353078747
+                      AcctType: DDA
+                      CurCode:
+                        CurCodeValue: EUR
+                    PartyAcctRelType: NIF
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfirmationOfPayeeResponse'
+              example:
+                PartyAcctRelInqRs:
+                  PartyAcctRelRec:
+                    - PartyAcctRelId: PT277172861:PT50003300000000353078747
+                      PartyAcctRelInfo:
+                        PartyRef:
+                          PartyKeys:
+                            PartyId: PT277172861
+                        PartyAcctRelData:
+                          - PartyAcctRelType: NIF
+                            PartyAcctRelDesc: ''
+                      PartyAcctRelStatus:
+                        PartyAcctRelStatusCode: NoMatch
+                        StatusDesc: Request successful
+                  RqUID: 80d1301f-a57e-4c92-9886-55f1272ac1d8
+                  Status:
+                    StatusCode: 0
+                    StatusDesc: Success
+                    Severity: Info
+                    AdditionalStatus: [ ]
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-21T16:34:56.5316394+00:00'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfirmationOfPayeeErrorResponse'
+              example:
+                PartyAcctRelInqRs:
+                  RqUID: a85cc3b0-ebc1-47c1-bac7-9d36b7fd465d
+                  Status:
+                    StatusCode: 1020
+                    StatusDesc: Required element not included.
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 1020
+                        StatusDesc: The PartyId field must start with 'PT' followed by 9 digits.
+                        Severity: Error
+                        SubjectElement: 'PartyAcctRelSel[0].PartyKeys.PartyId'
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-21T17:11:48.6625662+00:00'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfirmationOfPayeeErrorResponse'
+              example:
+                PartyAcctRelInqRs:
+                  RqUID: ''
+                  Status:
+                    StatusCode: 100
+                    StatusDesc: Unexpected error while confirming payee relationship
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 500
+                        StatusDesc: 'An item with the same key has already been added. Key: AcctIdentValue (Parameter ''key'')'
+                        Severity: Error
+                        SubjectElement: Exception
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-21T17:12:48.1696526+00:00'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfirmationOfPayeeErrorResponse'
+              example:
+                PartyAcctRelInqRs:
+                  RqUID: 82357d76-4d2c-4f9b-8c81-4262833d6053
+                  Status:
+                    StatusCode: 100
+                    StatusDesc: Error while confirming payee relationship
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 502
+                        StatusDesc: 'SERVICE_ERROR: COP005: IBAN has invalid length'
+                        Severity: Error
+                        SubjectElement: Exception
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-21T17:18:38.5475965+00:00'
+  /services/payments/transactions/return-reasons/inquiry:
+    post:
+      tags:
+        - B2B Inquiring
+      summary: B2B TRANSACTION RETURN REASONS API
+      description: This operation allows you to retrieve the reasons for transaction returns associated with a specific account and transaction. The request must include the account details for which the return reasons are to be retrieved.
+      operationId: TransactionReturnReasonsInquiry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountTransactionRefundRequest'
+            example:
+              AcctTrnInqRq:
+                RqUID: 660653d6-0f5a-44c3-9a95-576e2b5614fd
+                MsgRqHdr:
+                  ContextRqHdr:
+                    ClientDt: '2026-08-24T16:02:20.8970000+00:00'
+                    CustLangPref: PT
+                    ClientApp:
+                      Org: Millennium bcp
+                      Name: testClientAppName
+                      Version: 1.0.0
+                AcctTrnSel:
+                  - AcctKeys:
+                      AcctIdent:
+                        AcctIdentType: BBAN
+                        AcctIdentValue: '45475460752'
+                      AcctType: DDA
+                      CurCode:
+                        CurCodeValue: EUR
+                    Name: TNPY2607161415392566
+                    TrnType:
+                      TrnTypeValue: TransferReturn
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountTransactionRefundResponse'
+              example:
+                AcctTrnInqRs:
+                  AcctTrnRec:
+                    - AcctTrnId: '45475460752'
+                      AcctTrnInfo:
+                        TrnType:
+                          TrnTypeSource: IFX
+                          TrnTypeValue: TransferReturn
+                        PostedDt: '0001-01-01T00:00:00.0000000+00:00'
+                        EffDt: '0001-01-01T00:00:00.0000000+00:00'
+                        TotalCurAmt:
+                          Amt: 50
+                          CurCode:
+                            CurCodeValue: EUR
+                        Name: Transf. 160726U4902927T000000003
+                        XferKeys:
+                          XferId: 0033+++++TNPY2607161415392566
+                        RefData:
+                          RefType: MBCPReturnReason
+                          RefIdent: TRAD
+                          RefDesc: TRADE
+                      AcctTrnStatus:
+                        AcctStatusCode: Success
+                        EffDt: '2026-08-24T16:02:22.7414777+00:00'
+                  RqUID: 660653d6-0f5a-44c3-9a95-576e2b5614fd
+                  Status:
+                    StatusCode: 0
+                    StatusDesc: Success
+                    Severity: Info
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-24T16:02:22.7414777+00:00'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountTransactionRefundErrorResponse'
+              example:
+                AcctTrnInqRs:
+                  RqUID: 6a2e6c70-4976-48e2-8d14-99fd4386bb58
+                  Status:
+                    StatusCode: 1020
+                    StatusDesc: Required element not included.
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 1020
+                        StatusDesc: The Name field must start with TNPY.
+                        Severity: Error
+                        SubjectElement: 'AcctTrnSel[0].Name'
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-24T15:58:20.6680632+00:00'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountTransactionRefundErrorResponse'
+              example:
+                AcctTrnInqRs:
+                  RqUID: ''
+                  Status:
+                    StatusCode: 100
+                    StatusDesc: Unexpected error while consulting transaction return reasons
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 500
+                        StatusDesc: 'An item with the same key has already been added. Key: AcctIdentValue (Parameter ''key'')'
+                        Severity: Error
+                        SubjectElement: Exception
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-24T16:18:10.3258266+00:00'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountTransactionRefundErrorResponse'
+              example:
+                XferAddRs:
+                  RqUID: ba0dc455-c23d-48a6-bca4-fae684315a08
+                  Status:
+                    StatusCode: 100
+                    StatusDesc: Error while consulting transaction return reasons
+                    Severity: Error
+                    AdditionalStatus:
+                      - StatusCode: 502
+                        StatusDesc: 'AUTHENTICATION_ERROR: Dados Inválidos.'
+                        Severity: Error
+                        SubjectElement: Exception
+                  MsgRsHdr:
+                    ContextRsHdr:
+                      ServerDt: '2026-08-24T17:43:43.5500355+00:00'
+  /services/accounts/transfer-available-modes/inquiry:
+    post:
+      tags:
+        - B2B Inquiring
+      summary: B2B TRANSFER AVAILABLE MODES API
+      description: This operation allows you to retrieve the available transfer methods associated with a specific account and transaction. The request must include the account details for which you wish to retrieve the transfer methods.
+      operationId: TransferAvailableModesInquiry
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountTransferAvailableModesRequest'
+            example:
+              XferAvailableModesRqMsg:
+                XferAvailableModesInqRq:
+                  RqUID: ''
+                  MsgRqHdr:
+                    ContextRqHdr:
+                      ClientDt: '2026-08-26T13:48:53.9030000+00:00'
+                      CustLangPref: PT
+                      ClientApp:
+                        Org: Millennium bcp
+                        Name: testClientAppName
+                        Version: 1.0.0
+                  XferAvailableModesSel:
+                    AcctKeys:
+                      AcctIdent:
+                        AcctIdentType: IBAN
+                        AcctIdentValue: FR7617515900000476128824455
+                      AcctType: DDA
+                      CurCode:
+                        CurCodeValue: EUR
+                    CurAmt:
+                      Amt: '100000.01'
+                      CurCode:
+                        CurCodeValue: EUR
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountTransferAvailableModesResponse'
+              example:
+                XferAvailableModesRsMsg:
+                  XferAvailableModesInqRs:
+                    XferAvailableModesRec:
+                      - XferAvailableModesId: FR7617515900000476128824455
+                        XferAvailableModesInfo:
+                          RefData:
+                            - RefType: MandatoryBeneficiaryDescription
+                              RefIdent: 'True'
+                            - RefType: MandatoryDescriptionAmount
+                              RefIdent: '1000'
+                            - RefType: ModoEnvio
+                              RefIdent: NORMAL
+                            - RefType: ModoEnvio
+                              RefIdent: IMEDIATA
+                        XferAvailableModesStatus:
+                          StatusCode: Success
+                          EffDt: '2026-08-26T14:50:18.0216561+00:00'
+                    RqUID: 871f53a5-1432-4b03-97ea-178b5233210d
+                    Status:
+                      StatusCode: 0
+                      StatusDesc: Success
+                      Severity: Info
+                    MsgRsHdr:
+                      ContextRsHdr:
+                        ServerDt: '2026-08-26T14:50:18.0216561+00:00'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountTransferAvailableModesErrorResponse'
+              example:
+                XferAvailableModesRsMsg:
+                  XferAvailableModesInqRs:
+                    RqUID: ''
+                    Status:
+                      StatusCode: 100
+                      StatusDesc: The request body is invalid
+                      Severity: Error
+                      AdditionalStatus:
+                        - StatusCode: 100
+                          StatusDesc: Failed to read parameter "AccountTransferAvailableModesRequest request" from the request body as JSON.
+                          Severity: Error
+                    MsgRsHdr:
+                      ContextRsHdr:
+                        ServerDt: '2026-08-26T12:44:51.1274173+00:00'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountTransferAvailableModesErrorResponse'
+              example:
+                XferAvailableModesRsMsg:
+                  XferAvailableModesInqRs:
+                    RqUID: 7811d719-1d25-42f2-a881-fa21fa9233fb
+                    Status:
+                      StatusCode: 100
+                      StatusDesc: Unexpected error while consulting transfer available modes
+                      Severity: Error
+                      AdditionalStatus:
+                        - StatusCode: 500
+                          StatusDesc: The request channel timed out attempting to send after 00:01:00. Increase the timeout value passed to the call to Request or increase the SendTimeout value on the Binding. The time allotted to this operation may have been a portion of a longer timeout.
+                          Severity: Error
+                          SubjectElement: Exception
+                    MsgRsHdr:
+                      ContextRsHdr:
+                        ServerDt: '2026-08-26T12:55:54.4301558+00:00'
+        '502':
+          description: Bad Gateway
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountTransferAvailableModesErrorResponse'
+              example:
+                XferAvailableModesRsMsg:
+                  XferAvailableModesInqRs:
+                    RqUID: f9548d2e-181c-4726-ab95-fe46ef7cb8a5
+                    Status:
+                      StatusCode: 100
+                      StatusDesc: Error while consulting transfer available modes
+                      Severity: Error
+                      AdditionalStatus:
+                        - StatusCode: 502
+                          StatusDesc: 'Dados de acesso inválidos. Verifique que os dados introduzidos estão corretos. Caso o erro persista queira contactar-nos pelos telefones 21 005 24 24, 91 827 24 24, 93 522 24 24 ou 96 599 24 24.'
+                          Severity: Error
+                          SubjectElement: Exception
+                    MsgRsHdr:
+                      ContextRsHdr:
+                        ServerDt: '2026-08-26T13:39:57.8662801+00:00'
+components:
+  schemas:
+    AccountBalancesErrorResponse:
+      required:
+        - AcctInqRs
+      type: object
+      properties:
+        AcctInqRs:
+          $ref: '#/components/schemas/AcctInqErrorRs'
+    AccountBalancesRequest:
+      required:
+        - AcctInqRq
+      type: object
+      properties:
+        AcctInqRq:
+          $ref: '#/components/schemas/AcctInqRq'
+    AccountBalancesResponse:
+      required:
+        - AcctInqRs
+      type: object
+      properties:
+        AcctInqRs:
+          $ref: '#/components/schemas/AcctInqRs'
+    AccountPayeeInformationErrorResponse:
+      required:
+        - AcctInqRs
+      type: object
+      properties:
+        AcctInqRs:
+          $ref: '#/components/schemas/AcctInqErrorRs'
+    AccountPayeeInformationRequest:
+      required:
+        - AcctInqRq
+      type: object
+      properties:
+        AcctInqRq:
+          $ref: '#/components/schemas/AcctInqRq'
+    AccountPayeeInformationResponse:
+      required:
+        - AcctInqRs
+      type: object
+      properties:
+        AcctInqRs:
+          $ref: '#/components/schemas/AcctInqRs'
+    AccountTransactionRefundErrorResponse:
+      required:
+        - AcctTrnInqRs
+      type: object
+      properties:
+        AcctTrnInqRs:
+          $ref: '#/components/schemas/AcctTrnInqErrorRs'
+    AccountTransactionRefundRequest:
+      required:
+        - AcctTrnInqRq
+      type: object
+      properties:
+        AcctTrnInqRq:
+          $ref: '#/components/schemas/AcctTrnInqRq'
+    AccountTransactionRefundResponse:
+      required:
+        - AcctTrnInqRs
+      type: object
+      properties:
+        AcctTrnInqRs:
+          $ref: '#/components/schemas/AcctTrnInqRs'
+    AccountTransactionsErrorResponse:
+      required:
+        - AcctTrnInqRs
+      type: object
+      properties:
+        AcctTrnInqRs:
+          $ref: '#/components/schemas/AcctTrnInqErrorRs'
+    AccountTransactionsRequest:
+      required:
+        - AcctTrnInqRq
+      type: object
+      properties:
+        AcctTrnInqRq:
+          $ref: '#/components/schemas/AcctTrnInqRq'
+    AccountTransactionsResponse:
+      required:
+        - AcctTrnInqRs
+      type: object
+      properties:
+        AcctTrnInqRs:
+          $ref: '#/components/schemas/AcctTrnInqRs'
+    AccountTransferAvailableModesErrorResponse:
+      required:
+        - XferAvailableModesRsMsg
+      type: object
+      properties:
+        XferAvailableModesRsMsg:
+          $ref: '#/components/schemas/XferAvailableModesErrorRsMsg'
+    AccountTransferAvailableModesRequest:
+      required:
+        - XferAvailableModesRqMsg
+      type: object
+      properties:
+        XferAvailableModesRqMsg:
+          $ref: '#/components/schemas/XferAvailableModesRqMsg'
+    AccountTransferAvailableModesResponse:
+      required:
+        - XferAvailableModesRsMsg
+      type: object
+      properties:
+        XferAvailableModesRsMsg:
+          $ref: '#/components/schemas/XferAvailableModesRsMsg'
+    AcctBal:
+      required:
+        - BalType
+        - CurAmt
+      type: object
+      properties:
+        BalType:
+          $ref: '#/components/schemas/BalType'
+        CurAmt:
+          $ref: '#/components/schemas/CurAmt'
+    AcctIdent:
+      type: object
+      properties:
+        AcctIdentType:
+          oneOf:
+            - $ref: '#/components/schemas/AcctIdentType'
+          nullable: true
+        AcctIdentValue:
+          type: string
+          nullable: true
+    AcctIdentType:
+      enum:
+        - IBAN
+        - BBAN
+        - 
+    AcctInfo:
+      type: object
+      properties:
+        AcctBal:
+          type: array
+          items:
+            $ref: '#/components/schemas/AcctBal'
+          nullable: true
+        FIData:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/FIData'
+          nullable: true
+    AcctInqErrorRs:
+      required:
+        - RqUID
+      type: object
+      properties:
+        RqUID:
+          type: string
+        Status:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Status'
+          nullable: true
+        MsgRsHdr:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/MsgRsHdr'
+          nullable: true
+    AcctInqRq:
+      required:
+        - RqUID
+        - AcctSel
+      type: object
+      properties:
+        RqUID:
+          type: string
+        MsgRqHdr:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/MsgRqHdr'
+          nullable: true
+        AcctSel:
+          type: array
+          items:
+            $ref: '#/components/schemas/AcctSel'
+    AcctInqRs:
+      required:
+        - RqUID
+      type: object
+      properties:
+        AcctRec:
+          type: array
+          items:
+            $ref: '#/components/schemas/AcctRec'
+          nullable: true
+        RqUID:
+          type: string
+        Status:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Status'
+          nullable: true
+        MsgRsHdr:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/MsgRsHdr'
+          nullable: true
+    AcctKeys:
+      required:
+        - AcctIdent
+        - AcctType
+      type: object
+      properties:
+        AcctIdent:
+          $ref: '#/components/schemas/AcctIdent'
+        AcctType:
+          oneOf:
+            - $ref: '#/components/schemas/AcctTypeValue'
+          nullable: true
+        CurCode:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/CurCode'
+          nullable: true
+        FIIdentType:
+          oneOf:
+            - $ref: '#/components/schemas/FIIdentType'
+          nullable: true
+        FIIdent:
+          maxLength: 34
+          minLength: 0
+          type: string
+          nullable: true
+        BranchIdent:
+          maxLength: 22
+          minLength: 0
+          type: string
+          nullable: true
+    AcctRec:
+      required:
+        - AcctId
+        - AcctInfo
+        - AcctStatus
+      type: object
+      properties:
+        AcctId:
+          type: string
+        AcctInfo:
+          $ref: '#/components/schemas/AcctInfo'
+        AcctStatus:
+          $ref: '#/components/schemas/AcctStatus'
+    AcctSel:
+      required:
+        - AcctKeys
+      type: object
+      properties:
+        AcctKeys:
+          $ref: '#/components/schemas/AcctKeys'
+    AcctStatus:
+      required:
+        - AcctStatusCode
+      type: object
+      properties:
+        AcctStatusCode:
+          type: string
+        EffDt:
+          type: string
+          format: date-time
+    AcctTrnInfo:
+      type: object
+      properties:
+        AcctBal:
+          type: array
+          items:
+            $ref: '#/components/schemas/AcctBal'
+          nullable: true
+        TrnType:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/TrnType'
+          nullable: true
+        TrnSubType:
+          maxLength: 15
+          minLength: 0
+          type: string
+          nullable: true
+        PostedDt:
+          type: string
+          format: date-time
+          nullable: true
+        EffDt:
+          type: string
+          format: date-time
+          nullable: true
+        TotalCurAmt:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/TotalCurAmt'
+          nullable: true
+        Name:
+          maxLength: 40
+          minLength: 0
+          type: string
+          nullable: true
+        StmtRunningBal:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/StmtRunningBal'
+          nullable: true
+        ChkNum:
+          maxLength: 12
+          minLength: 0
+          type: string
+          nullable: true
+        XferKeys:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/XferKeys'
+          nullable: true
+        PmtKeys:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/PmtKeys'
+          nullable: true
+        RefData:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/RefData'
+          nullable: true
+        BillRefText:
+          maxLength: 80
+          minLength: 0
+          type: string
+          nullable: true
+        SPRefIdent:
+          maxLength: 36
+          minLength: 0
+          type: string
+          nullable: true
+    AcctTrnInqErrorRs:
+      required:
+        - RqUID
+      type: object
+      properties:
+        RqUID:
+          type: string
+        Status:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Status'
+          nullable: true
+        MsgRsHdr:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/MsgRsHdr'
+          nullable: true
+    AcctTrnInqRq:
+      required:
+        - RqUID
+        - AcctTrnSel
+      type: object
+      properties:
+        RqUID:
+          type: string
+        MsgRqHdr:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/MsgRqHdr'
+          nullable: true
+        AcctTrnSel:
+          type: array
+          items:
+            $ref: '#/components/schemas/AcctTrnSel'
+    AcctTrnInqRs:
+      required:
+        - RqUID
+      type: object
+      properties:
+        AcctTrnRec:
+          type: array
+          items:
+            $ref: '#/components/schemas/AcctTrnRec'
+          nullable: true
+        RqUID:
+          type: string
+        Status:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Status'
+          nullable: true
+        MsgRsHdr:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/MsgRsHdr'
+          nullable: true
+    AcctTrnRec:
+      required:
+        - AcctTrnId
+        - AcctTrnInfo
+        - AcctTrnStatus
+      type: object
+      properties:
+        AcctTrnId:
+          type: string
+        AcctTrnInfo:
+          $ref: '#/components/schemas/AcctTrnInfo'
+        AcctTrnStatus:
+          $ref: '#/components/schemas/AcctTrnStatus'
+    AcctTrnSel:
+      required:
+        - AcctKeys
+      type: object
+      properties:
+        AcctKeys:
+          $ref: '#/components/schemas/AcctKeys'
+        DtRange:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/DtRange'
+          nullable: true
+        CurAmtRange:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/CurAmtRange'
+          nullable: true
+        RecordCountLimit:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/RecordCountLimit'
+          nullable: true
+        TrnType:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/TrnType'
+          nullable: true
+        Name:
+          maxLength: 40
+          minLength: 0
+          type: string
+          nullable: true
+        ChkNumRange:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ChkNumRange'
+          nullable: true
+    AcctTrnStatus:
+      required:
+        - AcctStatusCode
+      type: object
+      properties:
+        AcctStatusCode:
+          type: string
+        EffDt:
+          type: string
+          format: date-time
+    AcctTypeValue:
+      enum:
+        - DDA
+        - CCA
+        - 
+    AdditionalStatus:
+      required:
+        - StatusCode
+        - Severity
+      type: object
+      properties:
+        StatusCode:
+          pattern: '^-?(?:0|[1-9]\d*)$'
+          format: int64
+        ServerStatusCode:
+          maxLength: 20
+          minLength: 0
+          type: string
+          nullable: true
+        StatusDesc:
+          maxLength: 255
+          minLength: 0
+          type: string
+          nullable: true
+        Severity:
+          $ref: '#/components/schemas/SeverityType'
+        SubjectElement: { }
+        OverrideException:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/OverrideException'
+          nullable: true
+    BalType:
+      enum:
+        - Avail
+        - Current
+        - Ledger
+    ChkNumRange:
+      type: object
+      properties:
+        ChkNumStart:
+          maxLength: 12
+          minLength: 0
+          type: string
+          nullable: true
+        ChkNumEnd:
+          maxLength: 12
+          minLength: 0
+          type: string
+          nullable: true
+    ClientApp:
+      required:
+        - Org
+        - Name
+        - Version
+      type: object
+      properties:
+        Org:
+          type: string
+        Name:
+          maxLength: 40
+          minLength: 0
+          type: string
+        Version:
+          maxLength: 12
+          minLength: 0
+          type: string
+    ConfirmationOfPayeeErrorResponse:
+      required:
+        - PartyAcctRelInqRs
+      type: object
+      properties:
+        PartyAcctRelInqRs:
+          $ref: '#/components/schemas/PartyAcctRelInqErrorRs'
+    ConfirmationOfPayeeRequest:
+      required:
+        - PartyAcctRelInqRq
+      type: object
+      properties:
+        PartyAcctRelInqRq:
+          $ref: '#/components/schemas/PartyAcctRelInqRq'
+    ConfirmationOfPayeeResponse:
+      required:
+        - PartyAcctRelInqRs
+      type: object
+      properties:
+        PartyAcctRelInqRs:
+          $ref: '#/components/schemas/PartyAcctRelInqRs'
+    ContextRqHdr:
+      type: object
+      properties:
+        ClientDt:
+          type: string
+          description: Client date and time
+          format: date-time
+          nullable: true
+        CustLangPref:
+          maxLength: 17
+          minLength: 0
+          type: string
+          description: Customer language preference
+          nullable: true
+        ClientApp:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ClientApp'
+          nullable: true
+    ContextRsHdr:
+      type: object
+      properties:
+        ServerDt:
+          type: string
+          format: date-time
+          nullable: true
+    CurAmt:
+      type: object
+      properties:
+        Amt:
+          pattern: '^-?(?:0|[1-9]\d*)(?:\.\d+)?$'
+          format: double
+          nullable: true
+        CurCode:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/CurCode'
+          nullable: true
+    CurAmtRange:
+      type: object
+      properties:
+        LowCurAmt:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/LowCurAmt'
+          nullable: true
+        HighCurAmt:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/HighCurAmt'
+          nullable: true
+    CurCode:
+      required:
+        - CurCodeValue
+      type: object
+      properties:
+        CurCodeValue:
+          $ref: '#/components/schemas/CurCodeValue'
+    CurCodeValue:
+      enum:
+        - EUR
+        - USD
+        - BRL
+        - AED
+        - AFN
+        - ALL
+        - AMD
+        - ANG
+        - AOA
+        - ARS
+        - AUD
+        - AWG
+        - AZN
+        - BAM
+        - BBD
+        - BDT
+        - BGN
+        - BHD
+        - BIF
+        - BMD
+        - BND
+        - BOB
+        - BOV
+        - BSD
+        - BTN
+        - BWP
+        - BYN
+        - BZD
+        - CAD
+        - CDF
+        - CHE
+        - CHF
+        - CHW
+        - CLF
+        - CLP
+        - CNY
+        - COP
+        - COU
+        - CRC
+        - CUC
+        - CUP
+        - CVE
+        - CZK
+        - DJF
+        - DKK
+        - DOP
+        - DZD
+        - EGP
+        - ERN
+        - ETB
+        - FJD
+        - FKP
+        - GBP
+        - GEL
+        - GHS
+        - GIP
+        - GMD
+        - GNF
+        - GTQ
+        - GYD
+        - HKD
+        - HNL
+        - HTG
+        - HUF
+        - IDR
+        - ILS
+        - INR
+        - IQD
+        - IRR
+        - ISK
+        - JMD
+        - JOD
+        - JPY
+        - KES
+        - KGS
+        - KHR
+        - KMF
+        - KPW
+        - KRW
+        - KWD
+        - KYD
+        - KZT
+        - LAK
+        - LBP
+        - LKR
+        - LRD
+        - LSL
+        - LYD
+        - MAD
+        - MDL
+        - MGA
+        - MKD
+        - MMK
+        - MNT
+        - MOP
+        - MRU
+        - MUR
+        - MVR
+        - MWK
+        - MXN
+        - MXV
+        - MYR
+        - MZN
+        - NAD
+        - NGN
+        - NIO
+        - NOK
+        - NPR
+        - NZD
+        - OMR
+        - PAB
+        - PEN
+        - PGK
+        - PHP
+        - PKR
+        - PLN
+        - PYG
+        - QAR
+        - RON
+        - RSD
+        - RUB
+        - RWF
+        - SAR
+        - SBD
+        - SCR
+        - SDG
+        - SEK
+        - SGD
+        - SHP
+        - SLE
+        - SOS
+        - SRD
+        - SSP
+        - STN
+        - SVC
+        - SYP
+        - SZL
+        - THB
+        - TJS
+        - TMT
+        - TND
+        - TOP
+        - TRY
+        - TTD
+        - TWD
+        - TZS
+        - UAH
+        - UGX
+        - USN
+        - UYI
+        - UYU
+        - UZS
+        - VED
+        - VEF
+        - VND
+        - VUV
+        - WST
+        - XAF
+        - XCD
+        - XCG
+        - XDR
+        - XOF
+        - XPF
+        - XSU
+        - XUA
+        - YER
+        - ZAR
+        - ZMW
+        - ZWL
+    DtRange:
+      type: object
+      properties:
+        StartDt:
+          type: string
+          format: date-time
+          nullable: true
+        EndDt:
+          type: string
+          format: date-time
+          nullable: true
+    FIData:
+      type: object
+      properties:
+        FIIdent:
+          type: string
+          nullable: true
+        FIIdentType:
+          oneOf:
+            - $ref: '#/components/schemas/FIIdentType'
+          nullable: true
+        RefData:
+          type: array
+          items:
+            $ref: '#/components/schemas/RefData'
+          nullable: true
+        Name:
+          type: string
+          nullable: true
+        BranchIdent:
+          type: string
+          nullable: true
+    FIIdentType:
+      enum:
+        - BICSWIFT
+        - SEPA
+        - SDD
+        - ECB
+        - EFT
+        - B2B
+        - BIC
+        - SWIFT
+        - ECBS
+        - CHAPS
+        - 
+    HighCurAmt:
+      type: object
+      properties:
+        Amt:
+          pattern: '^-?(?:0|[1-9]\d*)(?:\.\d+)?$'
+          format: double
+          nullable: true
+        CurCode:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/CurCode'
+          nullable: true
+    LowCurAmt:
+      type: object
+      properties:
+        Amt:
+          pattern: '^-?(?:0|[1-9]\d*)(?:\.\d+)?$'
+          format: double
+          nullable: true
+        CurCode:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/CurCode'
+          nullable: true
+    MsgRqHdr:
+      type: object
+      properties:
+        ContextRqHdr:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ContextRqHdr'
+          nullable: true
+    MsgRsHdr:
+      type: object
+      properties:
+        ContextRsHdr:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ContextRsHdr'
+          nullable: true
+    OverrideException:
+      required:
+        - OvrdExceptionCode
+      type: object
+      properties:
+        OvrdExceptionCode:
+          maxLength: 40
+          minLength: 0
+          type: string
+        OvrdExceptionType:
+          oneOf:
+            - $ref: '#/components/schemas/OvrdExceptionType'
+          nullable: true
+        OvrdExceptionSecurityLevel:
+          maxLength: 40
+          minLength: 0
+          type: array
+          items:
+            type: string
+          nullable: true
+        OvrdExceptionStatInd:
+          type: boolean
+        OvrdExceptionDesc:
+          maxLength: 255
+          minLength: 0
+          type: string
+          nullable: true
+    OvrdExceptionType:
+      enum:
+        - Limit
+        - Policy
+        - 
+    PartyAcctRelData:
+      required:
+        - PartyAcctRelType
+      type: object
+      properties:
+        PartyAcctRelType:
+          $ref: '#/components/schemas/PartyAcctRelType'
+        PartyAcctRelDesc:
+          maxLength: 80
+          minLength: 0
+          type: string
+          nullable: true
+    PartyAcctRelInfo:
+      required:
+        - PartyRef
+        - PartyAcctRelData
+      type: object
+      properties:
+        PartyRef:
+          $ref: '#/components/schemas/PartyRef'
+        PartyAcctRelData:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartyAcctRelData'
+          description: 'List of party account relationship data items. Each item represents a specific piece of information about the relationship between the party and the account, such as the type of relationship, the date it was established, etc.'
+    PartyAcctRelInqErrorRs:
+      required:
+        - RqUID
+      type: object
+      properties:
+        RqUID:
+          type: string
+        Status:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Status'
+          nullable: true
+        MsgRsHdr:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/MsgRsHdr'
+          nullable: true
+    PartyAcctRelInqRq:
+      required:
+        - RqUID
+        - PartyAcctRelSel
+      type: object
+      properties:
+        RqUID:
+          type: string
+        MsgRqHdr:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/MsgRqHdr'
+          nullable: true
+        PartyAcctRelSel:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartyAcctRelSel'
+    PartyAcctRelInqRs:
+      required:
+        - PartyAcctRelRec
+        - RqUID
+      type: object
+      properties:
+        PartyAcctRelRec:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartyAcctRelRec'
+        RqUID:
+          type: string
+        Status:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Status'
+          nullable: true
+        MsgRsHdr:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/MsgRsHdr'
+          nullable: true
+    PartyAcctRelRec:
+      required:
+        - PartyAcctRelId
+        - PartyAcctRelInfo
+        - PartyAcctRelStatus
+      type: object
+      properties:
+        PartyAcctRelId:
+          type: string
+        PartyAcctRelInfo:
+          $ref: '#/components/schemas/PartyAcctRelInfo'
+        PartyAcctRelStatus:
+          $ref: '#/components/schemas/PartyAcctRelStatus'
+    PartyAcctRelSel:
+      required:
+        - PartyKeys
+        - AcctKeys
+      type: object
+      properties:
+        PartyKeys:
+          $ref: '#/components/schemas/PartyKeys'
+        AcctKeys:
+          $ref: '#/components/schemas/AcctKeys'
+        PartyAcctRelType:
+          oneOf:
+            - $ref: '#/components/schemas/PartyAcctRelType'
+          nullable: true
+    PartyAcctRelStatus:
+      required:
+        - PartyAcctRelStatusCode
+      type: object
+      properties:
+        PartyAcctRelStatusCode:
+          $ref: '#/components/schemas/PartyAcctRelStatusCode'
+        StatusDesc:
+          maxLength: 255
+          minLength: 0
+          type: string
+          nullable: true
+    PartyAcctRelStatusCode:
+      enum:
+        - Match
+        - NoMatch
+        - Valid
+        - Deleted
+    PartyAcctRelType:
+      enum:
+        - Other
+        - NIF
+        - NIPC
+    PartyKeys:
+      required:
+        - PartyId
+      type: object
+      properties:
+        PartyId:
+          type: string
+          description: 'Party identifier, which can be either a national ID or a business registration number.'
+    PartyRef:
+      required:
+        - PartyKeys
+      type: object
+      properties:
+        PartyKeys:
+          $ref: '#/components/schemas/PartyKeys'
+    PmtKeys:
+      required:
+        - PmtId
+      type: object
+      properties:
+        PmtId:
+          maxLength: 36
+          minLength: 0
+          type: string
+          description: Unique identifier for the payment
+    RecordCountLimit:
+      type: object
+      properties:
+        MaxRecLimit:
+          pattern: '^-?(?:0|[1-9]\d*)$'
+          format: int32
+          nullable: true
+    RefData:
+      required:
+        - RefType
+      type: object
+      properties:
+        RefType:
+          $ref: '#/components/schemas/RefType'
+        RefIdent:
+          maxLength: 36
+          minLength: 0
+          type: string
+          description: Unique identifier for the reference data
+          nullable: true
+        RefDesc:
+          maxLength: 1024
+          minLength: 0
+          type: string
+          description: Description of the reference data
+          nullable: true
+    RefType:
+      enum:
+        - MBCPTransactionCode
+        - PayeeName
+        - FromDetails
+        - ToDetails
+        - SpinTaxNumber
+        - SpinPhoneNumber
+        - TargetAccountHolder
+        - NextWeekDay
+        - BankSpecific
+        - OrgSpecific
+        - APAccountNum
+        - ARAccountNum
+        - IsValid
+        - Address1
+        - Address2
+        - City
+        - Country
+        - Sepa
+        - BicSwift
+        - PayeeAddress
+        - PayeeCity
+        - PayeeCountry
+        - ClearingCode
+        - BusinessCountry
+        - CostDistribution
+        - BankName
+        - BankCity
+        - BusinessTransactionCode
+        - ProcessingMode
+        - MBCPReturnReason
+        - MandatoryBeneficiaryDescription
+        - MandatoryDescriptionAmount
+        - ModoEnvio
+    SeverityType:
+      enum:
+        - Info
+        - Warn
+        - Error
+    Status:
+      required:
+        - StatusCode
+        - Severity
+      type: object
+      properties:
+        StatusCode:
+          pattern: '^-?(?:0|[1-9]\d*)$'
+          format: int64
+        ServerStatusCode:
+          maxLength: 20
+          minLength: 0
+          type: string
+          nullable: true
+        StatusDesc:
+          maxLength: 255
+          minLength: 0
+          type: string
+          nullable: true
+        Severity:
+          $ref: '#/components/schemas/SeverityType'
+        AdditionalStatus:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdditionalStatus'
+          nullable: true
+    StmtRunningBal:
+      type: object
+      properties:
+        Amt:
+          pattern: '^-?(?:0|[1-9]\d*)(?:\.\d+)?$'
+          format: double
+          nullable: true
+        CurCode:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/CurCode'
+          nullable: true
+    TotalCurAmt:
+      type: object
+      properties:
+        Amt:
+          pattern: '^-?(?:0|[1-9]\d*)(?:\.\d+)?$'
+          format: double
+          nullable: true
+        CurCode:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/CurCode'
+          nullable: true
+    TrnType:
+      required:
+        - TrnTypeValue
+      type: object
+      properties:
+        TrnTypeSource:
+          oneOf:
+            - $ref: '#/components/schemas/TrnTypeSource'
+          nullable: true
+        TrnTypeValue:
+          oneOf:
+            - $ref: '#/components/schemas/TrnTypeValue'
+          nullable: true
+    TrnTypeSource:
+      enum:
+        - IFX
+        - 
+    TrnTypeValue:
+      enum:
+        - Adjustment
+        - Advance
+        - Credit
+        - Debit
+        - Deposit
+        - Dispurse
+        - Dividend
+        - Fee
+        - Interest
+        - Payment
+        - Purchase
+        - Redeem
+        - TransferReturn
+        - Sell
+        - Tax
+        - Transfer
+        - Withdrawal
+        - 
+    XferAvailableModesErrorInqRs:
+      required:
+        - RqUID
+      type: object
+      properties:
+        RqUID:
+          type: string
+        Status:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Status'
+          nullable: true
+        MsgRsHdr:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/MsgRsHdr'
+          nullable: true
+    XferAvailableModesErrorRsMsg:
+      required:
+        - XferAvailableModesInqRs
+      type: object
+      properties:
+        XferAvailableModesInqRs:
+          $ref: '#/components/schemas/XferAvailableModesErrorInqRs'
+    XferAvailableModesInfo:
+      required:
+        - RefData
+      type: object
+      properties:
+        RefData:
+          type: array
+          items:
+            $ref: '#/components/schemas/RefData'
+    XferAvailableModesInqRq:
+      required:
+        - RqUID
+        - XferAvailableModesSel
+      type: object
+      properties:
+        RqUID:
+          type: string
+        MsgRqHdr:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/MsgRqHdr'
+          nullable: true
+        XferAvailableModesSel:
+          $ref: '#/components/schemas/XferAvailableModesSel'
+    XferAvailableModesInqRs:
+      required:
+        - RqUID
+      type: object
+      properties:
+        XferAvailableModesRec:
+          type: array
+          items:
+            $ref: '#/components/schemas/XferAvailableModesRec'
+          nullable: true
+        RqUID:
+          type: string
+        Status:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/Status'
+          nullable: true
+        MsgRsHdr:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/MsgRsHdr'
+          nullable: true
+    XferAvailableModesRec:
+      required:
+        - XferAvailableModesId
+        - XferAvailableModesInfo
+        - XferAvailableModesStatus
+      type: object
+      properties:
+        XferAvailableModesId:
+          maxLength: 36
+          minLength: 0
+          type: string
+        XferAvailableModesInfo:
+          $ref: '#/components/schemas/XferAvailableModesInfo'
+        XferAvailableModesStatus:
+          $ref: '#/components/schemas/XferAvailableModesStatus'
+    XferAvailableModesRqMsg:
+      required:
+        - XferAvailableModesInqRq
+      type: object
+      properties:
+        XferAvailableModesInqRq:
+          $ref: '#/components/schemas/XferAvailableModesInqRq'
+    XferAvailableModesRsMsg:
+      required:
+        - XferAvailableModesInqRs
+      type: object
+      properties:
+        XferAvailableModesInqRs:
+          $ref: '#/components/schemas/XferAvailableModesInqRs'
+    XferAvailableModesSel:
+      required:
+        - AcctKeys
+      type: object
+      properties:
+        AcctKeys:
+          $ref: '#/components/schemas/AcctKeys'
+        CurAmt:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/CurAmt'
+          nullable: true
+    XferAvailableModesStatus:
+      required:
+        - StatusCode
+      type: object
+      properties:
+        StatusCode:
+          $ref: '#/components/schemas/XferAvailableModesStatusCode'
+        StatusDesc:
+          maxLength: 255
+          minLength: 0
+          type: string
+          nullable: true
+        EffDt:
+          type: string
+          format: date-time
+          nullable: true
+    XferAvailableModesStatusCode:
+      enum:
+        - Success
+        - Failure
+    XferKeys:
+      required:
+        - XferId
+      type: object
+      properties:
+        XferId:
+          maxLength: 36
+          minLength: 0
+          type: string
+          description: Unique identifier for the transfer
+  securitySchemes:
+    apiKeyHeader:
+      type: apiKey
+      name: Ocp-Apim-Subscription-Key
+      in: header
+    apiKeyQuery:
+      type: apiKey
+      name: subscription-key
+      in: query
+security:
+  - apiKeyHeader: [ ]
+  - apiKeyQuery: [ ]
+tags:
+  - name: B2B Accounts
+  - name: B2B Files
+  - name: B2B Transfers
+  - name: B2B Jwks
