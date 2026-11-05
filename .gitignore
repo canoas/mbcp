@@ -1,3 +1,10 @@
+# Secrets: every .env variant except the template
 .env
-__pycache__/
+.env.*
+!.env.example
+
+# Downloaded bank data
 exports/
+exports-*/
+
+__pycache__/

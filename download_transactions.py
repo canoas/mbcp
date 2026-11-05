@@ -18,7 +18,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from mbcp_client import ApiError, MbcpClient
+from mbcp_client import ApiError, MbcpClient, env_name
 
 CSV_FIELDS = [
     "account", "posted_dt", "eff_dt", "type", "sub_type", "amount", "currency",
@@ -154,7 +154,9 @@ def main():
                    help="stop after N consecutive months with no new transactions (0 = never; default 12)")
     p.add_argument("--split-at", type=int, default=None,
                    help="treat a window with >= N records as truncated and bisect it")
-    p.add_argument("--out", default="exports", help="output directory (default exports/)")
+    # Separate directory per environment so mock data never merges into real exports.
+    default_out = f"exports-{env_name()}" if env_name() else "exports"
+    p.add_argument("--out", default=default_out, help=f"output directory (default {default_out}/)")
     args = p.parse_args()
 
     client = MbcpClient()

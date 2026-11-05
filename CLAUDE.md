@@ -8,6 +8,7 @@ Goal: download the full transaction history of the user's Millennium bcp account
 
 - `b2b-inquiry-v1-mock.yaml`: OpenAPI 3.0.1 spec; the source of truth for request/response shapes.
 - `.env` (template in `.env.example`, documented in `README.md`): `URL` (API base URL), `API_KEY` (subscription key), optionally `ACCOUNTS` (comma-separated BBANs). Never print, log or commit `API_KEY`. Keep `.env.example` and the README tables in sync when adding variables or CLI options.
+- Environments: `MBCP_ENV=prod` loads `.env.prod` (hard error if missing, no fallback to `.env`), and the default output dir becomes `exports-prod/`. Don't run anything against `MBCP_ENV=prod` without the user asking, because it hits the real bank with real credentials.
 - `mbcp_client.py`: `MbcpClient` (loads `.env`, builds the `RqUID`/`MsgRqHdr` envelope, raises `ApiError` on HTTP errors). Run directly to print balances.
 - `download_transactions.py`: history downloader, writing `exports/<account>/transactions.{json,csv}`.
 

@@ -16,6 +16,18 @@ cp .env.example .env   # then edit it
 
 Variables already set in the shell take precedence over `.env`.
 
+### Environments
+
+`.env` is the default (the QA mock). For production, create `.env.prod` from the same template and select it with `MBCP_ENV`:
+
+```sh
+cp .env.example .env.prod    # set the real URL and API_KEY
+chmod 600 .env.prod
+MBCP_ENV=prod python3 download_transactions.py
+```
+
+`MBCP_ENV=<name>` loads `.env.<name>` and fails if it doesn't exist. It never falls back to `.env`, so a typo can't silently hit the wrong environment. Exports go to `exports-<name>/` instead of `exports/`, so mock data never mixes with real data. `.gitignore` excludes all `.env*` files except `.env.example`, as well as all export folders.
+
 There is no endpoint that lists your accounts, so you must supply the account numbers yourself (from online banking or your contract).
 
 > The `v1-mock` URL returns the spec's example data whatever you send (any account number, any dates). Use the real URL and key from the bank to export real history.
@@ -47,7 +59,7 @@ $ python3 download_transactions.py 1372742
 | `--until DATE` | now | Latest date to request. |
 | `--stop-after N` | `12` | Stop after N consecutive months with no new transactions (`0` = only stop at `--since`). |
 | `--split-at N` | off | Treat a month returning ≥ N records as truncated and split it in half until each piece fits. |
-| `--out DIR` | `exports` | Output directory. |
+| `--out DIR` | `exports` (`exports-<MBCP_ENV>` when set) | Output directory. |
 
 Re-running merges with what is already on disk, so it only adds new transactions.
 

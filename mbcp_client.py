@@ -14,7 +14,17 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-def load_env(path=Path(__file__).with_name(".env")):
+def env_name():
+    """Active environment: MBCP_ENV=prod selects .env.prod; unset means .env."""
+    return os.environ.get("MBCP_ENV", "")
+
+
+def load_env(path=None):
+    if path is None:
+        name = env_name()
+        path = Path(__file__).with_name(f".env.{name}" if name else ".env")
+        if name and not path.exists():
+            sys.exit(f"MBCP_ENV={name} but {path.name} not found")
     if path.exists():
         for line in path.read_text().splitlines():
             line = line.strip()
