@@ -162,7 +162,8 @@ def main():
     client = MbcpClient()
     accounts = args.accounts or [a for a in os.environ.get("ACCOUNTS", "").split(",") if a]
     if not accounts:
-        p.error("no accounts given (pass them as arguments or set ACCOUNTS in .env)")
+        env_file = f".env.{env_name()}" if env_name() else ".env"
+        p.error(f"no accounts given (pass them as arguments or set ACCOUNTS in {env_file})")
     since = parse_date(args.since)
     until = parse_date(args.until) if args.until else datetime.now(timezone.utc)
 

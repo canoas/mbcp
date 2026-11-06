@@ -32,6 +32,14 @@ There is no endpoint that lists your accounts, so you must supply the account nu
 
 > The `v1-mock` URL returns the spec's example data whatever you send (any account number, any dates). Use the real URL and key from the bank to export real history.
 
+## Bank onboarding (key pair)
+
+```sh
+python3 gen_keys.py          # optional arg: JWK "alg", default RS256
+```
+
+This creates `keys/private.pem` (RSA 2048, mode 600) plus `keys/public.jwk.json` and `keys/jwks.json`. Send the bank **only** `public.jwk.json`, together with the public IP or origin your requests will come from, and ask them for your `client_id` (and `client_secret` if they use one). Re-running never overwrites an existing private key; it only re-exports the public JWK. `keys/` is git-ignored. Back up `private.pem` somewhere safe, because losing it means re-registering with the bank.
+
 ## Usage
 
 Check access and show balances:

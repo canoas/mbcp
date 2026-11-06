@@ -11,6 +11,7 @@ Goal: download the full transaction history of the user's Millennium bcp account
 - Environments: `MBCP_ENV=prod` loads `.env.prod` (hard error if missing, no fallback to `.env`), and the default output dir becomes `exports-prod/`. Don't run anything against `MBCP_ENV=prod` without the user asking, because it hits the real bank with real credentials.
 - `mbcp_client.py`: `MbcpClient` (loads `.env`, builds the `RqUID`/`MsgRqHdr` envelope, raises `ApiError` on HTTP errors). Run directly to print balances.
 - `download_transactions.py`: history downloader, writing `exports/<account>/transactions.{json,csv}`.
+- `gen_keys.py`: onboarding key pair. Writes `keys/private.pem` (never read, print or share it) and the public JWK/JWKS (kid = RFC 7638 thumbprint). Registration with the bank is pending (client_id not yet issued); the client does not sign anything yet, and how keys and client_id are used (e.g. a signed JWT for a token, or request signing) is unknown until the bank documents it.
 
 ```sh
 python3 mbcp_client.py <acct> [...]                  # balances ("list accounts")

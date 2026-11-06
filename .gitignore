@@ -3,6 +3,10 @@
 .env.*
 !.env.example
 
+# Private keys (keys/public.jwk.json and keys/jwks.json are safe to share, but keep them together)
+keys/
+*.pem
+
 # Downloaded bank data
 exports/
 exports-*/
